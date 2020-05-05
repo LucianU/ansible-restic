@@ -11,27 +11,27 @@
 - set_fact:
     restic_binary: "{{ which_restic.stdout }}"
 
-- name: Create restic config dir
+- name: Create restic repo config dir
   file:
-    path: "{{ restic_config_dir }}"
+    path: "{{ restic_repo_config_dir }}"
     state: directory
   become: yes
 
 - name: Generate restic config file
   template:
     src: restic_env.j2
-    dest: "{{ restic_config }}"
+    dest: "{{ restic_repo_config }}"
   become: yes
 
 - name: Initialize the restic repository
   shell:
-    cmd: ". {{ restic_config }}; {{ restic_binary }} init; sudo touch {{ restic_config_dir }}/repo_initiated"
-    creates: "{{ restic_config_dir }}/repo_initiated"
+    cmd: ". {{ restic_repo_config }}; {{ restic_binary }} init; sudo touch {{ restic_repo_config_dir }}/repo_initiated"
+    creates: "{{ restic_repo_config_dir }}/repo_initiated"
 
 - name: Install cron tab, so restic creates backups for the wiki
   cron:
     name: Backup {{ tiddlywiki_wiki_name }}
     minute: "42"
-    job: "source {{ restic_config }}; {{ restic_binary }} backup -q {{ tiddlywiki_data_dir }}; {{ restic_binary }} forget -q --prune --keep-hourly 24 --keep-daily 7"
+    job: ". {{ restic_repo_config }}; {{ restic_binary }} backup -q {{ restic_dir_to_backup }}; {{ restic_binary }} forget -q --prune --keep-hourly 24 --keep-daily 7"
     state: present
   become: yes
