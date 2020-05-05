@@ -24,7 +24,7 @@
   become: yes
 
 - name: Initialize the restic repository
-  shell: 
+  shell:
     cmd: ". {{ restic_config }}; {{ restic_binary }} init; sudo touch {{ restic_config_dir }}/repo_initiated"
     creates: "{{ restic_config_dir }}/repo_initiated"
 
