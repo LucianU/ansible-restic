@@ -30,7 +30,7 @@
 
 - name: Install cron tab, so restic creates backups for the wiki
   cron:
-    name: Backup {{ tiddlywiki_wiki_name }}
+    name: Backup {{ restic_repo_name }}
     minute: "42"
     job: ". {{ restic_repo_config }}; {{ restic_binary }} backup -q {{ restic_dir_to_backup }}; {{ restic_binary }} forget -q --prune --keep-hourly 24 --keep-daily 7"
     state: present
